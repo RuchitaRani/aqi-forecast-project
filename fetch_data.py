@@ -41,6 +41,7 @@ def fetch_all_measurements(sensor_id, datetime_from, datetime_to):
 
 if __name__ == "__main__":
     import pandas as pd
+
     sensor_id = 12234921
     results = fetch_all_measurements(
         sensor_id,
@@ -48,8 +49,14 @@ if __name__ == "__main__":
         "2025-08-01T00:00:00Z"
     )
     print(len(results))
-    df=pd.DataFrame(results)
-    df.to_csv("data/pm25_raw.csv", index=False)
-    print("Data saved to data/pm25_raw.csv")
 
-    
+    cleaned = []
+    for r in results:
+        cleaned.append({
+            "datetime_utc": r["period"]["datetimeFrom"]["utc"],
+            "pm25": r["value"]
+        })
+
+    df = pd.DataFrame(cleaned)
+    df.to_csv("data/pm25_raw.csv", index=False)
+    print("Saved to data/pm25_raw.csv")
