@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import requests
 import time
-
+from datetime import datetime, timedelta
 load_dotenv()
 
 api_key=os.getenv("OPENAQ_API_KEY")
@@ -29,9 +29,9 @@ def fetch_all_measurements(sensor_id, datetime_from, datetime_to):
 
         all_results.extend(results)
 
-        last_timestamp=results[-1]["period"]["datetimeFrom"]["utc"]
-        current_from=last_timestamp
-
+        last_timestamp = datetime.fromisoformat(results[-1]["period"]["datetimeFrom"]["utc"].replace("Z", "+00:00"))
+        next_timestamp = last_timestamp + timedelta(seconds=1)
+        current_from = next_timestamp.isoformat().replace("+00:00", "Z")
         if len(results)<1000:
             break
 
